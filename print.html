@@ -1,0 +1,184 @@
+<html>
+	
+<head>
+	<meta charset="UTF-8"/>
+    <script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="js/jQuery.print.js"></script>
+    <script type="text/javascript" src="js/jquery.qrcode.min.js"></script>
+    <script src="js/Tdrag.js" type="text/javascript" charset="utf-8"></script>
+    <link  rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+</head>
+<style>
+	body{
+		/*width: 1200px;*/
+		/*position: relative;*/
+	}
+	.config{
+		position: fixed;
+		background: rgba(0,255,255,0.3);
+		width: 40%;
+		height: auto;
+		right: 0;
+		top: 50%;
+		/*margin-right:20%;*/
+		transform: translateY(-50%);
+		
+	}
+	#printContent{
+		width: 70mm;
+		height: 140mm;
+		border: 1px solid red;
+	}
+	.printImg {
+		width: 50mm;
+		height: 80mm;
+	}
+</style>
+<body >
+    <div id="printContent" >
+        <div class="qrc">
+            <div class="qrcBody" id="qrcBody">
+            </div>
+            <div class="qrcBody" id="qrcBodyImg" style="display:none;position: relative;">
+            	<img src="img/timg.jpg" alt="" class="printImg" />
+                 <img class= "qrcImg" src="" draggable="true" >
+                 <div id="detail">
+                 	<p>扫我吧<span></span></p>
+                 </div>
+                 <!--<img class="align-center-middle upLogo" src="" >-->
+            </div>
+        </div>
+    </div>
+    <div class="config">
+    	<h3>打印区设置</h3>
+	    <form style="width: 400px;margin-left: 100px;">
+		  <div class="form-group">
+		    <label for="exampleInputEmail1">打印区宽(mm)</label>
+		    <input type="number" class="form-control" id="printBoxWidth" placeholder="打印区宽" value="70">
+		  </div>
+		  <div class="form-group">
+		    <label for="exampleInputPassword1">打印区高(mm)</label>
+		    <input type="number" class="form-control" id="printBoxHeight" placeholder="打印区高" value="140">
+		  </div>
+		  <div class="form-group">
+		    <label for="exampleInputPassword1">打印区背景颜色</label>
+		    <input type="color" class="form-control" id="colorInput" value="#ffffff">
+		  </div>
+		  <div class="form-group">
+		    <label for="exampleInputPassword1">打印区边框颜色</label>
+		    <input type="color" class="form-control" id="colorInputBorder" value="#ff0000">
+		  </div>
+		</form>
+		<h3>打印区图片设置</h3>
+	    <form style="width: 400px;margin-left: 100px;">
+		  <div class="form-group">
+		    <label for="exampleInputEmail1">打印区图片宽(mm)</label>
+		    <input type="number" class="form-control" id="printBoxImgWidth" placeholder="打印区图片宽" value="50">
+		  </div>
+		  <div class="form-group">
+		    <label for="exampleInputPassword1">打印区图片高(mm)</label>
+		    <input type="number" class="form-control" id="printBoxImgHeight" placeholder="打印区图片高" value="80">
+		  </div>
+		  <div class="form-group">
+		    <label for="exampleInputPassword1">图片路径</label>
+		    <input type="file" id="fileInput">
+		  </div>
+		</form>
+		<h3>二维码设置</h3>
+		<form style="width: 400px;margin-left: 100px;">
+		  <div class="form-group">
+		    <label for="exampleInputEmail1">二维码宽高(px)</label>
+		    <input type="number" class="form-control" id="ewmWidth" placeholder="二维码宽高" value="60">
+		  </div>
+		</form>
+		<div class="box-footer">
+		  	<button id="btnPrint" type="button" class="btn btn-primary btn-lg" style="margin-left :30px">打印</button>
+		</div>
+    </div>
+	    
+    
+    
+	
+
+
+
+<script type="text/javascript">
+	$(function(){
+		function Draw(a){
+			if (a) {
+			$("#qrcodeList").removeClass("active");
+				
+			} else{
+				a = 60
+			}
+			$("#qrcodeList").addClass("active");
+		      //使用jQuery.qrcode.min.js生成二维码。
+		      jQuery('#qrcBody').qrcode({
+		       width: a,
+		       height: a,
+		       text: "Made In China"//二维码的内容
+		   });
+	      //canvas转img
+	        var qrcSrc = $("canvas")[0].toDataURL();
+	//      var upLogSrc = "img/kaoshen.jpg";
+	        $("#qrcBodyImg .qrcImg").attr("src", qrcSrc);
+	//      $("#qrcBodyImg .upLogo").attr("src", upLogSrc);
+	            $("#qrcBody").hide();//隐藏canvas部分
+	            $("#qrcBodyImg").show();//显示img部分
+	            console.log("draw......."+a)
+			}
+			Draw();
+		  
+		    $("#btnPrint").click(function(){
+		       $("#printContent").print({
+		       	
+		       });
+		   });
+		   //拖拽
+		   $(function(){
+		   		$(".qrcImg").Tdrag({
+			   		scope:"#printContent"
+			   	});
+			   	$("#detail").Tdrag({
+			   		scope:"#printContent"
+			   	});
+			   	$(".printImg").Tdrag({
+			   		scope:"#printContent"
+			   	});
+		   });
+		   //
+		   $("#printBoxWidth").change(function(){
+		   		$("#printContent").css("width",$(this).val()+"mm")
+		   });
+		   $("#printBoxHeight").change(function(){
+		   		$("#printContent").css("height",$(this).val()+"mm")
+		   });
+		   $("#printBoxImgWidth").change(function(){
+		   		$(".printImg").css("width",$(this).val()+"mm")
+		   });
+		   $("#colorInput").change(function(){
+		   		$("#printContent").css("background-color",$(this).val())
+		   });
+		   $("#colorInputBorder").change(function(){
+		   		$("#printContent").css("border-color",$(this).val())
+		   });
+		   $("#printBoxImgHeight").change(function(){
+		   		$(".printImg").css("height",$(this).val()+"mm")
+		   });
+		   $("#ewmWidth").change(function(){
+		   		$("#qrcBody").empty();
+		   		$("#qrcBody canvas").attr({"width":$(this).val(),"height":$(this).val()});
+		   		Draw($(this).val(),$(this).val());
+		   });
+		   $("#fileInput").change(function(){
+		   		$(".printImg").attr("src",$("#fileInput").val())
+		   })
+	})
+		    
+
+</script>
+<!--/.col (right) -->
+</body>
+
+
+</html>
